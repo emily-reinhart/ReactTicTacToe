@@ -1,10 +1,19 @@
 import React, { useState, Fragment } from 'react';
 import { calculateWinner } from '../helpers';
 import Board from './Board';
+import '../style.css';
 
 const styles = {
 	width: '200px',
-	margin: '20px auto'
+	margin: '20px auto',
+	fontWeight: '700'
+};
+const buttonStyle = {
+	borderRadius: '10px',
+	border: 'none',
+	backgroundColor: 'lightblue',
+	padding: '10px',
+	margin: '3px'
 };
 
 const Game = () => {
@@ -27,17 +36,25 @@ const Game = () => {
 	};
 
 	const jumpTo = (step) => {
+		console.log(step);
 		setStepNumber(step);
 		setXisNext(step % 2 === 0);
+		if (step === 0) {
+			window.location.reload();
+		}
 	};
 
 	const renderMoves = () =>
 		history.map((_step, move) => {
-			const destination = move ? `Go to move#${move}` : 'Go to start';
+			const destination = move ? `Go to Move #${move}` : 'Start New Game';
 			return (
-				<li key={move}>
-					<button onClick={() => jumpTo(move)}>{destination}</button>
-				</li>
+				<ul className="buttonList">
+					<li key={move}>
+						<button style={buttonStyle} onClick={() => jumpTo(move)}>
+							{destination}
+						</button>
+					</li>
+				</ul>
 			);
 		});
 
@@ -45,7 +62,15 @@ const Game = () => {
 		<Fragment>
 			<Board squares={history[stepNumber]} onClick={handleClick} />
 			<div style={styles}>
-				<p>{winner ? 'Winner: ' + winner : 'Next Player: ' + (xIsNext ? 'X' : 'O')}</p>
+				<p>
+					{winner ? (
+						'Winner! Player ' + winner
+					) : history[stepNumber].includes(null) ? (
+						'Next Player: ' + (xIsNext ? 'X' : 'O')
+					) : (
+						'Game Over, Nobody Wins'
+					)}
+				</p>
 				{renderMoves()}
 			</div>
 		</Fragment>
